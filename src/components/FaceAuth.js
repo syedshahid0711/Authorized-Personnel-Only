@@ -11,7 +11,7 @@ const FaceAuth = ({ onAuthSuccess }) => {
   const [statusMessage, setStatusMessage] = useState('Loading AI Models...');
   const [registeredFaces, setRegisteredFaces] = useState([]);
   const [faceMatcher, setFaceMatcher] = useState(null);
-  const [failedAttempts, setFailedAttempts] = useState(0);
+  const failedAttemptsRef = useRef(0);
 
   const faceMatcherRef = useRef(null);
   const modeRef = useRef(mode);
@@ -110,7 +110,7 @@ const FaceAuth = ({ onAuthSuccess }) => {
       if (faceMatcherRef.current) {
         const bestMatch = faceMatcherRef.current.findBestMatch(result.descriptor);
         if (bestMatch.label !== 'unknown') {
-          setFailedAttempts(0);
+          failedAttemptsRef.current = 0;
           setStatusMessage(`Match Found: ${bestMatch.label}! Authenticating...`);
           setTimeout(() => {
             if (videoRef.current && videoRef.current.srcObject) {
@@ -120,22 +120,19 @@ const FaceAuth = ({ onAuthSuccess }) => {
           }, 1500);
           return; // Stop scanning
         } else {
-          setFailedAttempts(prev => {
-            const newCount = prev + 1;
-            if (newCount >= 15) {
-              setStatusMessage('⚠️ CRITICAL: SECURITY BREACH. AUTHORITIES ALERTED! ⚠️');
-            } else {
-              setStatusMessage('Access Denied. Face not recognized.');
-            }
-            return newCount;
-          });
+          failedAttemptsRef.current += 1;
+          if (failedAttemptsRef.current >= 15) {
+            setStatusMessage('⚠️ CRITICAL: SECURITY BREACH. AUTHORITIES ALERTED! ⚠️');
+          } else {
+            setStatusMessage('Access Denied. Face not recognized.');
+          }
         }
       } else {
         setStatusMessage('No registered faces found in database.');
       }
     } else {
       // clear canvas
-      setFailedAttempts(0);
+      failedAttemptsRef.current = 0;
       if (canvasRef.current) {
         canvasRef.current.getContext('2d').clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
       }
@@ -198,6 +195,7 @@ const FaceAuth = ({ onAuthSuccess }) => {
         canvasRef.current.getContext('2d').clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode]);
 
   return (
