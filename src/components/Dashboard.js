@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, FileText, Users, Activity, Lock, LogOut, Terminal, Shield, Eye } from 'lucide-react';
+import { ShieldCheck, FileText, Users, Activity, LogOut, Terminal, Shield, Eye } from 'lucide-react';
 
 const Dashboard = ({ user, onLogout }) => {
   return (
