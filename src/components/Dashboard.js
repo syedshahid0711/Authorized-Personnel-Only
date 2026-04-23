@@ -28,7 +28,7 @@ const Dashboard = ({ user, onLogout }) => {
               <p>Biometric authentication successful. Secure connection established.</p>
             </div>
             <div className="security-badge">
-              <Shield size={16} /> 
+              <Shield size={16} />
               <span>Clearance: <strong>Level 5 (Top Secret)</strong></span>
             </div>
           </header>

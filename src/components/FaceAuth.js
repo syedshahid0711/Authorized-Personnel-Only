@@ -11,7 +11,7 @@ const FaceAuth = ({ onAuthSuccess }) => {
   const [statusMessage, setStatusMessage] = useState('Loading AI Models...');
   const [registeredFaces, setRegisteredFaces] = useState([]);
   const [faceMatcher, setFaceMatcher] = useState(null);
-  const [, setFailedAttempts] = useState(0);
+  const [failedAttempts, setFailedAttempts] = useState(0);
 
   const faceMatcherRef = useRef(null);
   const modeRef = useRef(mode);
@@ -198,7 +198,6 @@ const FaceAuth = ({ onAuthSuccess }) => {
         canvasRef.current.getContext('2d').clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode]);
 
   return (
