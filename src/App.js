@@ -1,23 +1,31 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
+import FaceAuth from './components/FaceAuth';
+import Dashboard from './components/Dashboard';
+import ParticleBackground from './components/ParticleBackground';
 import './App.css';
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userName, setUserName] = useState('');
+
+  const handleAuthSuccess = (name) => {
+    setUserName(name);
+    setIsAuthenticated(true);
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setUserName('');
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <ParticleBackground />
+      {!isAuthenticated ? (
+        <FaceAuth onAuthSuccess={handleAuthSuccess} />
+      ) : (
+        <Dashboard user={userName} onLogout={handleLogout} />
+      )}
     </div>
   );
 }
