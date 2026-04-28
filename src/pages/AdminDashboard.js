@@ -16,13 +16,13 @@ const saveMessages = (msgs) => localStorage.setItem('adminMessages', JSON.string
 
 // ─── EnlistSoldierPanel (face registration) ─────────────────────
 const EnlistSoldierPanel = () => {
-  const videoRef  = useRef(null);
+  const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [modelsLoaded, setModelsLoaded] = useState(false);
-  const [name,         setName]         = useState('');
-  const [status,       setStatus]       = useState('LOADING TACTICAL AI MODULES...');
-  const [statusType,   setStatusType]   = useState('info');
-  const [streaming,    setStreaming]     = useState(false);
+  const [name, setName] = useState('');
+  const [status, setStatus] = useState('LOADING TACTICAL AI MODULES...');
+  const [statusType, setStatusType] = useState('info');
+  const [streaming, setStreaming] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -201,10 +201,10 @@ const DispatchOrdersModal = ({ soldier, onClose }) => {
 
 // ─── SoldiersTab ───────────────────────────────────────────────
 const SoldiersTab = () => {
-  const [soldiers,      setSoldiers]      = useState([]);
-  const [search,        setSearch]        = useState('');
+  const [soldiers, setSoldiers] = useState([]);
+  const [search, setSearch] = useState('');
   const [confirmDelete, setConfirmDelete] = useState(null);
-  const [dispatching,   setDispatching]   = useState(null);
+  const [dispatching, setDispatching] = useState(null);
 
   useEffect(() => { loadSoldiers(); }, []);
 
@@ -273,7 +273,7 @@ const SoldiersTab = () => {
                 const unread = soldierMsgs.filter(msg => !msg.read).length;
                 return (
                   <tr key={m.label} className="adm-table-row">
-          <td className="adm-td-num">SEP-{String(idx + 1).padStart(3, '0')}</td>
+                    <td className="adm-td-num">PVT-{String(idx + 1).padStart(3, '0')}</td>
                     <td className="adm-td-name">
                       <div className="adm-avatar">{m.label.charAt(0).toUpperCase()}</div>
                       <span>{m.label.toUpperCase()}</span>
@@ -320,7 +320,7 @@ const SoldiersTab = () => {
 // ─── AdminDashboard (main) ─────────────────────────────────────
 const AdminDashboard = ({ admin, onLogout }) => {
   const [activeTab, setActiveTab] = useState('soldiers');
-  const [mounted,   setMounted]   = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => { setTimeout(() => setMounted(true), 30); }, []);
 
@@ -341,8 +341,8 @@ const AdminDashboard = ({ admin, onLogout }) => {
         <div className="adm-nav-brand">
           <ShieldCheck size={26} className="adm-brand-icon" />
           <div>
-            <span className="adm-brand-title">Indian Army Command HQ</span>
-            <span className="adm-brand-sub">COAS — Command Panel</span>
+            <span className="adm-brand-title">Army Command HQ</span>
+            <span className="adm-brand-sub">Chief of Army — Command Panel</span>
           </div>
         </div>
         <div className="adm-nav-right">

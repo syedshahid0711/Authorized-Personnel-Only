@@ -3,15 +3,15 @@ import * as faceapi from '@vladmandic/face-api';
 import { ScanFace, Loader2, ShieldAlert, KeyRound } from 'lucide-react';
 
 const FaceAuth = ({ onAuthSuccess, onAdminClick }) => {
-  const videoRef  = useRef(null);
+  const videoRef = useRef(null);
   const canvasRef = useRef(null);
-  const [modelsLoaded,  setModelsLoaded]  = useState(false);
+  const [modelsLoaded, setModelsLoaded] = useState(false);
   const [statusMessage, setStatusMessage] = useState('INITIALIZING TACTICAL SYSTEMS...');
   const [registeredFaces, setRegisteredFaces] = useState([]);
-  const [faceMatcher,     setFaceMatcher]     = useState(null);
+  const [faceMatcher, setFaceMatcher] = useState(null);
   const failedAttemptsRef = useRef(0);
-  const faceMatcherRef    = useRef(null);
-  const activeRef         = useRef(true);
+  const faceMatcherRef = useRef(null);
+  const activeRef = useRef(true);
 
   useEffect(() => { faceMatcherRef.current = faceMatcher; }, [faceMatcher]);
 
@@ -104,7 +104,7 @@ const FaceAuth = ({ onAuthSuccess, onAdminClick }) => {
           );
         }
       } else {
-        setStatusMessage('NO SOLDIERS ENLISTED. CONTACT COAS.');
+        setStatusMessage('NO SOLDIERS ENLISTED. CONTACT CHIEF OF ARMY.');
       }
     } else {
       failedAttemptsRef.current = 0;
@@ -120,7 +120,7 @@ const FaceAuth = ({ onAuthSuccess, onAdminClick }) => {
       <div className="auth-card">
         <div className="auth-header">
           <ScanFace size={32} className="text-primary" />
-          <h2>Indian Army Biometric System</h2>
+          <h2>Biometric ID System</h2>
         </div>
 
         <div className="video-wrapper">
@@ -137,10 +137,9 @@ const FaceAuth = ({ onAuthSuccess, onAdminClick }) => {
           <div className="scanner-bracket bl" /><div className="scanner-bracket br" />
         </div>
 
-        <div className={`status-bar ${
-          statusMessage.includes('CRITICAL') || statusMessage.includes('BREACH') ? 'status-critical'
-          : statusMessage.includes('DENIED') ? 'status-error' : ''
-        }`}>
+        <div className={`status-bar ${statusMessage.includes('CRITICAL') || statusMessage.includes('BREACH') ? 'status-critical'
+            : statusMessage.includes('DENIED') ? 'status-error' : ''
+          }`}>
           <ShieldAlert size={18} />
           <span>{statusMessage}</span>
         </div>
@@ -148,7 +147,7 @@ const FaceAuth = ({ onAuthSuccess, onAdminClick }) => {
         <div className="auth-footer">
           <div className="auth-footer-actions">
             <button className="btn-admin-link" onClick={onAdminClick}>
-              <KeyRound size={14} /> COAS Login
+              <KeyRound size={14} /> Chief of Army Login
             </button>
           </div>
         </div>

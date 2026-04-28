@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { ShieldCheck, Lock, User, Eye, EyeOff, AlertTriangle, KeyRound, ArrowLeft } from 'lucide-react';
 
-const ADMIN_ID       = '29092009';
+const ADMIN_ID = '29092009';
 const ADMIN_PASSWORD = 'itsshahid';
 
 const AdminLoginPage = ({ onLoginSuccess, onBack }) => {
-  const [adminId,      setAdminId]      = useState('');
-  const [password,     setPassword]     = useState('');
+  const [adminId, setAdminId] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [error,        setError]        = useState('');
-  const [attempts,     setAttempts]     = useState(0);
-  const [locked,       setLocked]       = useState(false);
-  const [lockTimer,    setLockTimer]    = useState(0);
-  const [shake,        setShake]        = useState(false);
-  const [mounted,      setMounted]      = useState(false);
+  const [error, setError] = useState('');
+  const [attempts, setAttempts] = useState(0);
+  const [locked, setLocked] = useState(false);
+  const [lockTimer, setLockTimer] = useState(0);
+  const [shake, setShake] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => { setTimeout(() => setMounted(true), 30); }, []);
 
@@ -39,7 +39,7 @@ const AdminLoginPage = ({ onLoginSuccess, onBack }) => {
     if (adminId.trim() === ADMIN_ID && password === ADMIN_PASSWORD) {
       setError('');
       setMounted(false);
-      setTimeout(() => onLoginSuccess({ id: ADMIN_ID, role: 'Chief of Army Staff (COAS)' }), 400);
+      setTimeout(() => onLoginSuccess({ id: ADMIN_ID, role: 'Chief of the Army' }), 400);
     } else {
       const next = attempts + 1;
       setAttempts(next);
@@ -73,8 +73,8 @@ const AdminLoginPage = ({ onLoginSuccess, onBack }) => {
           <div className="alp-shield-ring">
             <ShieldCheck size={36} />
           </div>
-          <h1>Chief of Army Staff</h1>
-          <p>INDIAN ARMY — TOP SECRET COMMAND ACCESS</p>
+          <h1>Chief of the Army</h1>
+          <p>TOP SECRET — COMMAND ACCESS ONLY</p>
         </div>
 
         {locked && (
@@ -87,12 +87,12 @@ const AdminLoginPage = ({ onLoginSuccess, onBack }) => {
         <form className="alp-form" onSubmit={handleLogin} autoComplete="off">
           <div className="alp-field">
             <label htmlFor="alp-id">
-              <User size={13} /> Indian Army ID
+              <User size={13} /> Army ID
             </label>
             <input
               id="alp-id"
               type="text"
-              placeholder="Enter your Indian Army ID"
+              placeholder="Enter your Army ID"
               value={adminId}
               onChange={e => { setAdminId(e.target.value); setError(''); }}
               disabled={locked}
