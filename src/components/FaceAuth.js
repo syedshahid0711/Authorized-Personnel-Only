@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as faceapi from '@vladmandic/face-api';
-import { Camera, UserPlus, ScanFace, Loader2, ShieldAlert } from 'lucide-react';
+import { Camera, UserPlus, ScanFace, Loader2, ShieldAlert, ShieldCheck } from 'lucide-react';
+import AdminLogin from './AdminLogin';
 
 const FaceAuth = ({ onAuthSuccess }) => {
   const videoRef = useRef(null);
@@ -12,6 +13,8 @@ const FaceAuth = ({ onAuthSuccess }) => {
   const [registeredFaces, setRegisteredFaces] = useState([]);
   const [faceMatcher, setFaceMatcher] = useState(null);
   const failedAttemptsRef = useRef(0);
+  const [showAdminLogin, setShowAdminLogin] = useState(false);
+  const [adminUser, setAdminUser] = useState(null); // { id, role }
 
   const faceMatcherRef = useRef(null);
   const modeRef = useRef(mode);
@@ -254,18 +257,43 @@ const FaceAuth = ({ onAuthSuccess }) => {
 
         <div className="auth-footer">
           {mode === 'scan' ? (
-            <button className="btn-text" onClick={() => setMode('register')}>
-              Admin: Register New Face
+            <button className="btn-text" onClick={() => setShowAdminLogin(true)}>
+              🔐 Admin: Register New Face
             </button>
           ) : (
-            <button className="btn-text" onClick={() => {
-              setMode('scan');
-              setStatusMessage('Scanning for Authorized Personnel...');
-            }}>
-              Back to Security Portal
-            </button>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+              {adminUser && (
+                <div className="admin-session-badge">
+                  <ShieldCheck size={14} />
+                  <span>Admin Session: <strong>{adminUser.role}</strong></span>
+                  <button
+                    className="admin-session-end"
+                    onClick={() => { setMode('scan'); setAdminUser(null); setStatusMessage('Scanning for Authorized Personnel...'); }}
+                  >
+                    End Session
+                  </button>
+                </div>
+              )}
+              <button className="btn-text" onClick={() => {
+                setMode('scan');
+                setStatusMessage('Scanning for Authorized Personnel...');
+              }}>
+                ← Back to Security Portal
+              </button>
+            </div>
           )}
         </div>
+
+        {showAdminLogin && (
+          <AdminLogin
+            onSuccess={(admin) => {
+              setAdminUser(admin);
+              setShowAdminLogin(false);
+              setMode('register');
+            }}
+            onClose={() => setShowAdminLogin(false)}
+          />
+        )}
       </div>
     </div>
   );
