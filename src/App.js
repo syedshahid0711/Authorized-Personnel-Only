@@ -6,6 +6,14 @@ import AdminLoginPage from './pages/AdminLoginPage';
 import AdminDashboard from './pages/AdminDashboard';
 import './App.css';
 
+const BulletTransition = () => (
+  <div className="bullet-transition-overlay">
+    <div className="muzzle-flash" />
+    <div className="bullet-trail" />
+    <div className="bullet-projectile" />
+  </div>
+);
+
 // App screens:
 //   'face-auth'        → face scanner (default)
 //   'user-dashboard'   → shown after face recognition success
@@ -16,39 +24,52 @@ function App() {
   const [screen,    setScreen]    = useState('face-auth');
   const [userName,  setUserName]  = useState('');
   const [adminUser, setAdminUser] = useState(null);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  // Helper to trigger bullet transition when switching pages
+  const navigateTo = (newScreen) => {
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setScreen(newScreen);
+    }, 150); // Swap screen right when the muzzle flash is brightest
+    setTimeout(() => {
+      setIsTransitioning(false);
+    }, 600); // Wait for bullet and smoke trail to finish
+  };
 
   // Face auth success → user dashboard
   const handleFaceAuthSuccess = (name) => {
     setUserName(name);
-    setScreen('user-dashboard');
+    navigateTo('user-dashboard');
   };
 
   // User logs out → back to face scanner
   const handleUserLogout = () => {
     setUserName('');
-    setScreen('face-auth');
+    navigateTo('face-auth');
   };
 
   // Admin logs in
   const handleAdminLoginSuccess = (admin) => {
     setAdminUser(admin);
-    setScreen('admin-dashboard');
+    navigateTo('admin-dashboard');
   };
 
   // Admin logs out
   const handleAdminLogout = () => {
     setAdminUser(null);
-    setScreen('face-auth');
+    navigateTo('face-auth');
   };
 
   return (
     <div className="App">
       <ParticleBackground />
+      {isTransitioning && <BulletTransition />}
 
       {screen === 'face-auth' && (
         <FaceAuth
           onAuthSuccess={handleFaceAuthSuccess}
-          onAdminClick={() => setScreen('admin-login')}
+          onAdminClick={() => navigateTo('admin-login')}
         />
       )}
 
@@ -59,7 +80,7 @@ function App() {
       {screen === 'admin-login' && (
         <AdminLoginPage
           onLoginSuccess={handleAdminLoginSuccess}
-          onBack={() => setScreen('face-auth')}
+          onBack={() => navigateTo('face-auth')}
         />
       )}
 

@@ -2758,3 +2758,62 @@ h4 {
   margin-top: -8px;
   text-align: center;
 }
+
+/* ══════════════════════════════════════════════════
+   ★ BULLET PAGE TRANSITION
+   ══════════════════════════════════════════════════ */
+.bullet-transition-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+}
+
+.muzzle-flash {
+  position: absolute;
+  inset: 0;
+  background: white;
+  opacity: 0;
+  animation: flash-blind 0.5s ease-out forwards;
+}
+
+.bullet-projectile {
+  position: absolute;
+  top: 50%;
+  left: -20vw;
+  width: 15vw;
+  height: 6px;
+  background: linear-gradient(to right, transparent, rgba(255,200,0,0.8), #fff);
+  border-radius: 50% 100% 100% 50%;
+  filter: drop-shadow(0 0 15px rgba(255,150,0,0.9));
+  animation: fire-bullet 0.3s cubic-bezier(0.8, 0, 1, 1) forwards;
+}
+
+.bullet-trail {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(to right, transparent, rgba(201,168,76,0.6));
+  animation: trail-fade 0.5s ease-out forwards;
+}
+
+@keyframes flash-blind {
+  0% { opacity: 0; }
+  15% { opacity: 0.9; background: #fffacd; }
+  35% { opacity: 0.6; background: #ff4500; }
+  100% { opacity: 0; background: transparent; }
+}
+
+@keyframes fire-bullet {
+  0% { transform: translate(-20vw, -50%); }
+  100% { transform: translate(120vw, -50%); }
+}
+
+@keyframes trail-fade {
+  0% { width: 0; opacity: 1; }
+  50% { width: 100vw; opacity: 0.8; }
+  100% { width: 100vw; opacity: 0; }
+}
