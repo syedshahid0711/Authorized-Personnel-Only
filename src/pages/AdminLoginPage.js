@@ -53,11 +53,7 @@ const AdminLoginPage = ({ onLoginSuccess, onBack }) => {
 
   return (
     <div className="alp-page alp-page--visible">
-      <div className="alp-rings">
-        <div className="alp-ring alp-ring--1" />
-        <div className="alp-ring alp-ring--2" />
-        <div className="alp-ring alp-ring--3" />
-      </div>
+
 
       <div className={`alp-card ${shake ? 'alp-card--shake' : ''} alp-card--visible`}>
 
