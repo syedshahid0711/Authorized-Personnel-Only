@@ -5,8 +5,8 @@ import { ScanFace, Loader2, ShieldAlert, KeyRound } from 'lucide-react';
 const FaceAuth = ({ onAuthSuccess, onAdminClick }) => {
   const videoRef  = useRef(null);
   const canvasRef = useRef(null);
-  const [modelsLoaded, setModelsLoaded] = useState(false);
-  const [statusMessage, setStatusMessage] = useState('Loading AI Models...');
+  const [modelsLoaded,  setModelsLoaded]  = useState(false);
+  const [statusMessage, setStatusMessage] = useState('INITIALIZING TACTICAL SYSTEMS...');
   const [registeredFaces, setRegisteredFaces] = useState([]);
   const [faceMatcher,     setFaceMatcher]     = useState(null);
   const failedAttemptsRef = useRef(0);
@@ -26,11 +26,11 @@ const FaceAuth = ({ onAuthSuccess, onAdminClick }) => {
           faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
         ]);
         setModelsLoaded(true);
-        setStatusMessage('Starting Webcam...');
+        setStatusMessage('ACTIVATING SURVEILLANCE FEED...');
         startVideo();
         loadRegisteredFaces();
       } catch {
-        setStatusMessage('Error loading AI models.');
+        setStatusMessage('SYSTEM ERROR: TACTICAL MODULES FAILED TO LOAD.');
       }
     };
     loadModels();
@@ -41,7 +41,6 @@ const FaceAuth = ({ onAuthSuccess, onAdminClick }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Rebuild FaceMatcher whenever faces list changes
   useEffect(() => {
     if (registeredFaces.length > 0) {
       const labeled = registeredFaces.map(rf => {
@@ -62,11 +61,11 @@ const FaceAuth = ({ onAuthSuccess, onAdminClick }) => {
   const startVideo = () => {
     navigator.mediaDevices.getUserMedia({ video: true })
       .then(stream => { if (videoRef.current) videoRef.current.srcObject = stream; })
-      .catch(() => setStatusMessage('Webcam access denied.'));
+      .catch(() => setStatusMessage('SURVEILLANCE FEED DENIED. CHECK CAMERA ACCESS.'));
   };
 
   const handleVideoPlay = () => {
-    setStatusMessage('Scanning for Authorized Personnel...');
+    setStatusMessage('SCANNING FOR ENLISTED SOLDIERS...');
     scanLoop();
   };
 
@@ -90,7 +89,7 @@ const FaceAuth = ({ onAuthSuccess, onAdminClick }) => {
         const best = faceMatcherRef.current.findBestMatch(result.descriptor);
         if (best.label !== 'unknown') {
           failedAttemptsRef.current = 0;
-          setStatusMessage(`Match Found: ${best.label}! Authenticating...`);
+          setStatusMessage(`✅ SOLDIER IDENTIFIED: ${best.label.toUpperCase()} — GRANTING ACCESS...`);
           setTimeout(() => {
             if (videoRef.current?.srcObject) videoRef.current.srcObject.getTracks().forEach(t => t.stop());
             onAuthSuccess(best.label);
@@ -100,17 +99,17 @@ const FaceAuth = ({ onAuthSuccess, onAdminClick }) => {
           failedAttemptsRef.current += 1;
           setStatusMessage(
             failedAttemptsRef.current >= 15
-              ? '⚠️ CRITICAL: SECURITY BREACH. AUTHORITIES ALERTED! ⚠️'
-              : 'Access Denied. Face not recognized.'
+              ? '🚨 CRITICAL: SECURITY BREACH DETECTED. BASE COMMAND ALERTED! 🚨'
+              : '⛔ ACCESS DENIED — UNIDENTIFIED INDIVIDUAL DETECTED'
           );
         }
       } else {
-        setStatusMessage('No registered faces in database. Contact admin.');
+        setStatusMessage('NO SOLDIERS ENLISTED. CONTACT CHIEF OF ARMY.');
       }
     } else {
       failedAttemptsRef.current = 0;
       if (canvasRef.current) canvasRef.current.getContext('2d').clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-      setStatusMessage('Scanning for Authorized Personnel...');
+      setStatusMessage('SCANNING FOR ENLISTED SOLDIERS...');
     }
 
     if (activeRef.current) setTimeout(() => scanLoop(), 200);
@@ -121,7 +120,7 @@ const FaceAuth = ({ onAuthSuccess, onAdminClick }) => {
       <div className="auth-card">
         <div className="auth-header">
           <ScanFace size={32} className="text-primary" />
-          <h2>Security Portal</h2>
+          <h2>Biometric ID System</h2>
         </div>
 
         <div className="video-wrapper">
@@ -139,8 +138,8 @@ const FaceAuth = ({ onAuthSuccess, onAdminClick }) => {
         </div>
 
         <div className={`status-bar ${
-          statusMessage.includes('CRITICAL') ? 'status-critical'
-          : statusMessage.includes('Denied') ? 'status-error' : ''
+          statusMessage.includes('CRITICAL') || statusMessage.includes('BREACH') ? 'status-critical'
+          : statusMessage.includes('DENIED') ? 'status-error' : ''
         }`}>
           <ShieldAlert size={18} />
           <span>{statusMessage}</span>
@@ -149,7 +148,7 @@ const FaceAuth = ({ onAuthSuccess, onAdminClick }) => {
         <div className="auth-footer">
           <div className="auth-footer-actions">
             <button className="btn-admin-link" onClick={onAdminClick}>
-              <KeyRound size={14} /> Admin Login
+              <KeyRound size={14} /> Chief of Army Login
             </button>
           </div>
         </div>

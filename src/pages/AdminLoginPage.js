@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { ShieldCheck, Lock, User, Eye, EyeOff, AlertTriangle, KeyRound, ArrowLeft } from 'lucide-react';
 
-// ── Your admin credentials ──────────────────────────────────────
 const ADMIN_ID       = '29092009';
 const ADMIN_PASSWORD = 'itsshahid';
-// ────────────────────────────────────────────────────────────────
 
 const AdminLoginPage = ({ onLoginSuccess, onBack }) => {
   const [adminId,      setAdminId]      = useState('');
@@ -19,7 +17,6 @@ const AdminLoginPage = ({ onLoginSuccess, onBack }) => {
 
   useEffect(() => { setTimeout(() => setMounted(true), 30); }, []);
 
-  // Countdown timer when locked
   useEffect(() => {
     if (!locked) return;
     const interval = setInterval(() => {
@@ -39,11 +36,10 @@ const AdminLoginPage = ({ onLoginSuccess, onBack }) => {
   const handleLogin = (e) => {
     e.preventDefault();
     if (locked) return;
-
     if (adminId.trim() === ADMIN_ID && password === ADMIN_PASSWORD) {
       setError('');
       setMounted(false);
-      setTimeout(() => onLoginSuccess({ id: ADMIN_ID, role: 'Main Administrator' }), 400);
+      setTimeout(() => onLoginSuccess({ id: ADMIN_ID, role: 'Chief of the Army' }), 400);
     } else {
       const next = attempts + 1;
       setAttempts(next);
@@ -52,16 +48,15 @@ const AdminLoginPage = ({ onLoginSuccess, onBack }) => {
       if (next >= 3) {
         setLocked(true);
         setLockTimer(30);
-        setError('Too many failed attempts. Locked for 30 seconds.');
+        setError('ACCESS LOCKED: Too many failed attempts. Stand down for 30 seconds.');
       } else {
-        setError(`Incorrect credentials. ${3 - next} attempt(s) remaining.`);
+        setError(`AUTHORIZATION FAILED. ${3 - next} attempt(s) remaining before lockout.`);
       }
     }
   };
 
   return (
     <div className={`alp-page ${mounted ? 'alp-page--visible' : ''}`}>
-      {/* Animated background rings */}
       <div className="alp-rings">
         <div className="alp-ring alp-ring--1" />
         <div className="alp-ring alp-ring--2" />
@@ -70,39 +65,34 @@ const AdminLoginPage = ({ onLoginSuccess, onBack }) => {
 
       <div className={`alp-card ${shake ? 'alp-card--shake' : ''} ${mounted ? 'alp-card--visible' : ''}`}>
 
-        {/* Back button */}
         <button className="alp-back-btn" onClick={onBack}>
-          <ArrowLeft size={16} /> Back to Portal
+          <ArrowLeft size={16} /> Return to Base
         </button>
 
-        {/* Header */}
         <div className="alp-header">
           <div className="alp-shield-ring">
             <ShieldCheck size={36} />
           </div>
-          <h1>Admin Control Panel</h1>
-          <p>Authorized personnel only — enter your credentials</p>
+          <h1>Chief of the Army</h1>
+          <p>TOP SECRET — COMMAND ACCESS ONLY</p>
         </div>
 
-        {/* Lock banner */}
         {locked && (
           <div className="alp-lock-banner">
             <AlertTriangle size={16} />
-            <span>Account locked &middot; {lockTimer}s remaining</span>
+            <span>COMMAND LOCKED · Stand down {lockTimer}s</span>
           </div>
         )}
 
-        {/* Login form */}
         <form className="alp-form" onSubmit={handleLogin} autoComplete="off">
-          {/* Admin ID */}
           <div className="alp-field">
             <label htmlFor="alp-id">
-              <User size={13} /> Admin ID
+              <User size={13} /> Army ID
             </label>
             <input
               id="alp-id"
               type="text"
-              placeholder="Enter your admin ID"
+              placeholder="Enter your Army ID"
               value={adminId}
               onChange={e => { setAdminId(e.target.value); setError(''); }}
               disabled={locked}
@@ -110,33 +100,25 @@ const AdminLoginPage = ({ onLoginSuccess, onBack }) => {
             />
           </div>
 
-          {/* Password */}
           <div className="alp-field">
             <label htmlFor="alp-pw">
-              <Lock size={13} /> Password
+              <Lock size={13} /> Authorization Code
             </label>
             <div className="alp-pw-wrapper">
               <input
                 id="alp-pw"
                 type={showPassword ? 'text' : 'password'}
-                placeholder="Enter your password"
+                placeholder="Enter authorization code"
                 value={password}
                 onChange={e => { setPassword(e.target.value); setError(''); }}
                 disabled={locked}
               />
-              <button
-                type="button"
-                className="alp-toggle-pw"
-                onClick={() => setShowPassword(v => !v)}
-                tabIndex={-1}
-                aria-label="Toggle password"
-              >
+              <button type="button" className="alp-toggle-pw" onClick={() => setShowPassword(v => !v)} tabIndex={-1}>
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
           </div>
 
-          {/* Error */}
           {error && (
             <div className="alp-error">
               <AlertTriangle size={14} />
@@ -144,19 +126,14 @@ const AdminLoginPage = ({ onLoginSuccess, onBack }) => {
             </div>
           )}
 
-          {/* Submit */}
-          <button
-            type="submit"
-            className="alp-submit"
-            disabled={locked || !adminId || !password}
-          >
+          <button type="submit" className="alp-submit" disabled={locked || !adminId || !password}>
             <KeyRound size={18} />
-            Authenticate &amp; Enter
+            Authenticate &amp; Enter Command
           </button>
         </form>
 
         <p className="alp-footer-note">
-          This portal is monitored. Unauthorized access attempts are logged.
+          ⚠ This terminal is monitored by Military Intelligence. All unauthorized access attempts are logged and prosecuted.
         </p>
       </div>
     </div>

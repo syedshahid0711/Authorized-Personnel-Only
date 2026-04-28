@@ -4,7 +4,7 @@ import {
   ShieldCheck, Users, LogOut, Trash2, UserCheck,
   Calendar, AlertCircle, Search, RefreshCw,
   UserPlus, Camera, Loader2, Send, MessageSquare,
-  X, CheckCircle, ChevronRight, Bell
+  X, CheckCircle, Bell
 } from 'lucide-react';
 
 // ─── Helpers ───────────────────────────────────────────────────
@@ -14,14 +14,14 @@ const getMessages = () => {
 };
 const saveMessages = (msgs) => localStorage.setItem('adminMessages', JSON.stringify(msgs));
 
-// ─── RegisterFacePanel ─────────────────────────────────────────
-const RegisterFacePanel = () => {
+// ─── EnlistSoldierPanel (face registration) ─────────────────────
+const EnlistSoldierPanel = () => {
   const videoRef  = useRef(null);
   const canvasRef = useRef(null);
   const [modelsLoaded, setModelsLoaded] = useState(false);
   const [name,         setName]         = useState('');
-  const [status,       setStatus]       = useState('Loading AI models...');
-  const [statusType,   setStatusType]   = useState('info'); // info | success | error
+  const [status,       setStatus]       = useState('LOADING TACTICAL AI MODULES...');
+  const [statusType,   setStatusType]   = useState('info');
   const [streaming,    setStreaming]     = useState(false);
 
   useEffect(() => {
@@ -36,17 +36,14 @@ const RegisterFacePanel = () => {
         ]);
         if (!mounted) return;
         setModelsLoaded(true);
-        setStatus('Models ready. Starting camera...');
+        setStatus('AI MODULES READY. ACTIVATING CAMERA...');
         startCamera();
       } catch {
-        if (mounted) setStatus('Failed to load AI models.');
+        if (mounted) { setStatus('SYSTEM ERROR: AI MODULES FAILED.'); setStatusType('error'); }
       }
     };
     load();
-    return () => {
-      mounted = false;
-      stopCamera();
-    };
+    return () => { mounted = false; stopCamera(); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -56,36 +53,33 @@ const RegisterFacePanel = () => {
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
           setStreaming(true);
-          setStatus('Position the person\'s face in the camera.');
+          setStatus('POSITION SOLDIER\'S FACE IN FRAME.');
           setStatusType('info');
         }
       })
-      .catch(() => { setStatus('Camera access denied.'); setStatusType('error'); });
+      .catch(() => { setStatus('SURVEILLANCE CAMERA ACCESS DENIED.'); setStatusType('error'); });
   };
 
   const stopCamera = () => {
-    if (videoRef.current?.srcObject) {
-      videoRef.current.srcObject.getTracks().forEach(t => t.stop());
-    }
+    if (videoRef.current?.srcObject) videoRef.current.srcObject.getTracks().forEach(t => t.stop());
   };
 
   const handleCapture = async () => {
-    if (!name.trim()) { setStatus('Enter a name first.'); setStatusType('error'); return; }
-    setStatus('Capturing face data...'); setStatusType('info');
+    if (!name.trim()) { setStatus('ENTER SOLDIER\'S NAME BEFORE CAPTURE.'); setStatusType('error'); return; }
+    setStatus('CAPTURING BIOMETRIC DATA...'); setStatusType('info');
 
     const result = await faceapi
       .detectSingleFace(videoRef.current, new faceapi.TinyFaceDetectorOptions())
       .withFaceLandmarks()
       .withFaceDescriptor();
 
-    if (!result) { setStatus('No face detected. Try again.'); setStatusType('error'); return; }
+    if (!result) { setStatus('NO FACE DETECTED IN FRAME. RETRY.'); setStatusType('error'); return; }
 
     const stored = localStorage.getItem('registeredFaces');
     const existing = stored ? JSON.parse(stored) : [];
 
-    // Prevent duplicate name
     if (existing.find(f => f.label.toLowerCase() === name.trim().toLowerCase())) {
-      setStatus(`"${name.trim()}" is already registered.`); setStatusType('error'); return;
+      setStatus(`SOLDIER "${name.trim().toUpperCase()}" ALREADY ENLISTED.`); setStatusType('error'); return;
     }
 
     const newFace = {
@@ -96,17 +90,15 @@ const RegisterFacePanel = () => {
         hour: '2-digit', minute: '2-digit'
       }),
     };
-
     localStorage.setItem('registeredFaces', JSON.stringify([...existing, newFace]));
 
-    // Draw detection on canvas
     if (canvasRef.current && videoRef.current) {
       const size = { width: videoRef.current.videoWidth, height: videoRef.current.videoHeight };
       faceapi.matchDimensions(canvasRef.current, size);
       faceapi.draw.drawDetections(canvasRef.current, faceapi.resizeResults(result, size));
     }
 
-    setStatus(`✅ "${name.trim()}" registered successfully!`); setStatusType('success');
+    setStatus(`✅ SOLDIER "${name.trim().toUpperCase()}" SUCCESSFULLY ENLISTED.`); setStatusType('success');
     setName('');
   };
 
@@ -116,7 +108,7 @@ const RegisterFacePanel = () => {
         {!modelsLoaded && (
           <div className="rfp-loading-overlay">
             <Loader2 size={40} className="rfp-spinner" />
-            <p>Loading AI Face Models...</p>
+            <p>LOADING TACTICAL AI SYSTEMS...</p>
           </div>
         )}
         <video ref={videoRef} autoPlay muted playsInline className="rfp-video" />
@@ -134,34 +126,30 @@ const RegisterFacePanel = () => {
       <div className="rfp-form">
         <input
           type="text"
-          placeholder="Enter member's full name"
+          placeholder="Enter soldier's full name"
           value={name}
           onChange={e => setName(e.target.value)}
           className="rfp-name-input"
           onKeyDown={e => e.key === 'Enter' && handleCapture()}
         />
-        <button
-          className="rfp-capture-btn"
-          onClick={handleCapture}
-          disabled={!modelsLoaded || !streaming}
-        >
-          <Camera size={18} /> Capture & Register
+        <button className="rfp-capture-btn" onClick={handleCapture} disabled={!modelsLoaded || !streaming}>
+          <Camera size={18} /> Capture &amp; Enlist Soldier
         </button>
       </div>
     </div>
   );
 };
 
-// ─── SendMessageModal ──────────────────────────────────────────
-const SendMessageModal = ({ member, onClose }) => {
+// ─── DispatchOrdersModal ───────────────────────────────────────
+const DispatchOrdersModal = ({ soldier, onClose }) => {
   const [text, setText] = useState('');
   const [sent, setSent] = useState(false);
 
   const handleSend = () => {
     if (!text.trim()) return;
     const msgs = getMessages();
-    if (!msgs[member]) msgs[member] = [];
-    msgs[member].push({
+    if (!msgs[soldier]) msgs[soldier] = [];
+    msgs[soldier].push({
       text: text.trim(),
       sentAt: new Date().toLocaleString('en-IN', {
         year: 'numeric', month: 'short', day: '2-digit',
@@ -179,30 +167,30 @@ const SendMessageModal = ({ member, onClose }) => {
       <div className="smm-card">
         <button className="smm-close" onClick={onClose}><X size={16} /></button>
         <div className="smm-header">
-          <div className="smm-avatar">{member.charAt(0).toUpperCase()}</div>
+          <div className="smm-avatar">{soldier.charAt(0).toUpperCase()}</div>
           <div>
-            <h3>Send Message</h3>
-            <p>To: <strong>{member}</strong> · will see this on next login</p>
+            <h3>Dispatch Orders</h3>
+            <p>To Soldier: <strong>{soldier.toUpperCase()}</strong> · Orders delivered on next login</p>
           </div>
         </div>
 
         {sent ? (
           <div className="smm-sent">
             <CheckCircle size={32} />
-            <span>Message sent!</span>
+            <span>ORDERS DISPATCHED!</span>
           </div>
         ) : (
           <>
             <textarea
               className="smm-textarea"
-              placeholder={`Type your message to ${member}...`}
+              placeholder={`Enter orders for Soldier ${soldier.toUpperCase()}...`}
               value={text}
               onChange={e => setText(e.target.value)}
               rows={5}
               autoFocus
             />
             <button className="smm-send-btn" onClick={handleSend} disabled={!text.trim()}>
-              <Send size={16} /> Send Message
+              <Send size={16} /> Dispatch Orders
             </button>
           </>
         )}
@@ -211,40 +199,35 @@ const SendMessageModal = ({ member, onClose }) => {
   );
 };
 
-// ─── MembersTab ────────────────────────────────────────────────
-const MembersTab = () => {
-  const [members,       setMembers]       = useState([]);
+// ─── SoldiersTab ───────────────────────────────────────────────
+const SoldiersTab = () => {
+  const [soldiers,      setSoldiers]      = useState([]);
   const [search,        setSearch]        = useState('');
   const [confirmDelete, setConfirmDelete] = useState(null);
-  const [messaging,     setMessaging]     = useState(null);
+  const [dispatching,   setDispatching]   = useState(null);
 
-  useEffect(() => { loadMembers(); }, []);
+  useEffect(() => { loadSoldiers(); }, []);
 
-  const loadMembers = () => {
+  const loadSoldiers = () => {
     const stored = localStorage.getItem('registeredFaces');
     if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        setMembers(parsed.map((m, i) => ({ ...m, index: i + 1 })));
-      } catch { setMembers([]); }
-    } else { setMembers([]); }
+      try { setSoldiers(JSON.parse(stored).map((m, i) => ({ ...m, index: i + 1 }))); }
+      catch { setSoldiers([]); }
+    } else { setSoldiers([]); }
   };
 
-  const handleDelete = (label) => {
+  const handleDischarge = (label) => {
     const stored = localStorage.getItem('registeredFaces');
     if (!stored) return;
     const updated = JSON.parse(stored).filter(m => m.label !== label);
     localStorage.setItem('registeredFaces', JSON.stringify(updated));
-    // Also remove their messages
-    const msgs = getMessages();
-    delete msgs[label];
-    saveMessages(msgs);
+    const msgs = getMessages(); delete msgs[label]; saveMessages(msgs);
     setConfirmDelete(null);
-    loadMembers();
+    loadSoldiers();
   };
 
   const msgs = getMessages();
-  const filtered = members.filter(m => m.label.toLowerCase().includes(search.toLowerCase()));
+  const filtered = soldiers.filter(m => m.label.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <div className="adm-tab-content">
@@ -253,13 +236,13 @@ const MembersTab = () => {
           <Search size={16} className="adm-search-icon" />
           <input
             type="text"
-            placeholder="Search member by name..."
+            placeholder="Search soldier by name..."
             value={search}
             onChange={e => setSearch(e.target.value)}
             className="adm-search-input"
           />
         </div>
-        <button className="adm-refresh-btn" onClick={loadMembers}>
+        <button className="adm-refresh-btn" onClick={loadSoldiers}>
           <RefreshCw size={15} /> Refresh
         </button>
       </div>
@@ -267,9 +250,9 @@ const MembersTab = () => {
       {filtered.length === 0 ? (
         <div className="adm-empty">
           <Users size={48} />
-          {members.length === 0
-            ? <p>No members registered yet.<br />Use "Register New Face" tab to add members.</p>
-            : <p>No members match your search.</p>
+          {soldiers.length === 0
+            ? <p>No soldiers enlisted yet.<br />Use "Enlist New Soldier" tab to add troops.</p>
+            : <p>No soldiers match your search.</p>
           }
         </div>
       ) : (
@@ -277,44 +260,44 @@ const MembersTab = () => {
           <table className="adm-table">
             <thead>
               <tr>
-                <th>#</th>
-                <th><UserCheck size={14} /> Member Name</th>
-                <th><Calendar size={14} /> Registered</th>
-                <th><Bell size={14} /> Messages</th>
-                <th>Actions</th>
+                <th>RANK</th>
+                <th><UserCheck size={14} /> SOLDIER NAME</th>
+                <th><Calendar size={14} /> ENLISTED</th>
+                <th><Bell size={14} /> ORDERS</th>
+                <th>COMMAND</th>
               </tr>
             </thead>
             <tbody>
               {filtered.map((m, idx) => {
-                const memberMsgs = msgs[m.label] || [];
-                const unread = memberMsgs.filter(msg => !msg.read).length;
+                const soldierMsgs = msgs[m.label] || [];
+                const unread = soldierMsgs.filter(msg => !msg.read).length;
                 return (
                   <tr key={m.label} className="adm-table-row">
-                    <td className="adm-td-num">{idx + 1}</td>
+                    <td className="adm-td-num">PVT-{String(idx + 1).padStart(3, '0')}</td>
                     <td className="adm-td-name">
                       <div className="adm-avatar">{m.label.charAt(0).toUpperCase()}</div>
-                      <span>{m.label}</span>
+                      <span>{m.label.toUpperCase()}</span>
                     </td>
                     <td className="adm-td-date">{m.registeredAt || '—'}</td>
                     <td>
                       <span className={`adm-msg-count ${unread > 0 ? 'adm-msg-count--unread' : ''}`}>
-                        {memberMsgs.length} sent{unread > 0 ? ` · ${unread} unread` : ''}
+                        {soldierMsgs.length} dispatched{unread > 0 ? ` · ${unread} unread` : ''}
                       </span>
                     </td>
                     <td className="adm-td-action">
                       <div className="adm-action-row">
-                        <button className="adm-send-btn" onClick={() => setMessaging(m.label)}>
-                          <MessageSquare size={14} /> Message
+                        <button className="adm-send-btn" onClick={() => setDispatching(m.label)}>
+                          <MessageSquare size={14} /> Dispatch
                         </button>
                         {confirmDelete === m.label ? (
                           <div className="adm-confirm-delete">
-                            <span>Sure?</span>
-                            <button className="adm-btn-yes" onClick={() => handleDelete(m.label)}>Yes</button>
+                            <span>Discharge?</span>
+                            <button className="adm-btn-yes" onClick={() => handleDischarge(m.label)}>Yes</button>
                             <button className="adm-btn-no" onClick={() => setConfirmDelete(null)}>No</button>
                           </div>
                         ) : (
                           <button className="adm-delete-btn" onClick={() => setConfirmDelete(m.label)}>
-                            <Trash2 size={14} /> Remove
+                            <Trash2 size={14} /> Discharge
                           </button>
                         )}
                       </div>
@@ -327,8 +310,8 @@ const MembersTab = () => {
         </div>
       )}
 
-      {messaging && (
-        <SendMessageModal member={messaging} onClose={() => { setMessaging(null); loadMembers(); }} />
+      {dispatching && (
+        <DispatchOrdersModal soldier={dispatching} onClose={() => { setDispatching(null); loadSoldiers(); }} />
       )}
     </div>
   );
@@ -336,20 +319,20 @@ const MembersTab = () => {
 
 // ─── AdminDashboard (main) ─────────────────────────────────────
 const AdminDashboard = ({ admin, onLogout }) => {
-  const [activeTab, setActiveTab] = useState('members');
+  const [activeTab, setActiveTab] = useState('soldiers');
   const [mounted,   setMounted]   = useState(false);
 
   useEffect(() => { setTimeout(() => setMounted(true), 30); }, []);
+
+  const soldierCount = (() => {
+    const s = localStorage.getItem('registeredFaces');
+    return s ? JSON.parse(s).length : 0;
+  })();
 
   const now = new Date().toLocaleString('en-IN', {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
     hour: '2-digit', minute: '2-digit'
   });
-
-  const memberCount = (() => {
-    const s = localStorage.getItem('registeredFaces');
-    return s ? JSON.parse(s).length : 0;
-  })();
 
   return (
     <div className={`adm-page ${mounted ? 'adm-page--visible' : ''}`}>
@@ -358,34 +341,33 @@ const AdminDashboard = ({ admin, onLogout }) => {
         <div className="adm-nav-brand">
           <ShieldCheck size={26} className="adm-brand-icon" />
           <div>
-            <span className="adm-brand-title">Nexus Security Core</span>
-            <span className="adm-brand-sub">Admin Control Panel</span>
+            <span className="adm-brand-title">Army Command HQ</span>
+            <span className="adm-brand-sub">Chief of Army — Command Panel</span>
           </div>
         </div>
         <div className="adm-nav-right">
           <div className="adm-session-info">
             <div className="adm-session-dot" />
-            <span>ID: <strong>{admin.id}</strong></span>
+            <span>Army ID: <strong>{admin.id}</strong></span>
             <span className="adm-role-badge">{admin.role}</span>
           </div>
           <button className="adm-logout-btn" onClick={onLogout}>
-            <LogOut size={15} /> Sign Out
+            <LogOut size={15} /> Stand Down
           </button>
         </div>
       </nav>
 
       {/* MAIN */}
       <main className="adm-main">
-        {/* Header */}
         <header className="adm-header">
           <div>
-            <h1>Admin Dashboard</h1>
+            <h1>Command Center</h1>
             <p>{now}</p>
           </div>
           <div className="adm-header-stats">
             <div className="adm-stat-pill">
               <Users size={16} />
-              <span><strong>{memberCount}</strong> Registered Members</span>
+              <span><strong>{soldierCount}</strong> Enlisted Soldiers</span>
             </div>
           </div>
         </header>
@@ -393,31 +375,30 @@ const AdminDashboard = ({ admin, onLogout }) => {
         {/* Tabs */}
         <div className="adm-tabs">
           <button
-            className={`adm-tab-btn ${activeTab === 'members' ? 'adm-tab-btn--active' : ''}`}
-            onClick={() => setActiveTab('members')}
+            className={`adm-tab-btn ${activeTab === 'soldiers' ? 'adm-tab-btn--active' : ''}`}
+            onClick={() => setActiveTab('soldiers')}
           >
-            <Users size={16} /> Members &amp; Messages
+            <Users size={16} /> Soldiers &amp; Dispatch Orders
           </button>
           <button
-            className={`adm-tab-btn ${activeTab === 'register' ? 'adm-tab-btn--active' : ''}`}
-            onClick={() => setActiveTab('register')}
+            className={`adm-tab-btn ${activeTab === 'enlist' ? 'adm-tab-btn--active' : ''}`}
+            onClick={() => setActiveTab('enlist')}
           >
-            <UserPlus size={16} /> Register New Face
+            <UserPlus size={16} /> Enlist New Soldier
           </button>
         </div>
 
-        {/* Tab content */}
-        {activeTab === 'members' && <MembersTab />}
-        {activeTab === 'register' && (
+        {activeTab === 'soldiers' && <SoldiersTab />}
+        {activeTab === 'enlist' && (
           <div className="adm-tab-content">
             <div className="rfp-intro">
               <div className="rfp-intro-icon"><UserPlus size={22} /></div>
               <div>
-                <h3>Register a New Member</h3>
-                <p>Position the person's face in front of the camera, enter their name, then click capture.</p>
+                <h3>Enlist a New Soldier</h3>
+                <p>Position the soldier's face clearly in front of the camera, enter their name, and capture their biometric data.</p>
               </div>
             </div>
-            <RegisterFacePanel />
+            <EnlistSoldierPanel />
           </div>
         )}
       </main>

@@ -1,23 +1,18 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&family=Share+Tech+Mono&display=swap');
 
 :root {
-  --bg-color: #0f172a;
-  /* Slate 900 */
-  --surface-color: rgba(30, 41, 59, 0.7);
-  /* Slate 800 with opacity */
-  --surface-border: rgba(255, 255, 255, 0.1);
-  --primary-color: #3b82f6;
-  /* Blue 500 */
-  --primary-hover: #2563eb;
-  /* Blue 600 */
-  --secondary-color: #10b981;
-  /* Emerald 500 */
-  --text-main: #f8fafc;
-  /* Slate 50 */
-  --text-muted: #94a3b8;
-  /* Slate 400 */
-  --danger-color: #ef4444;
-  /* Red 500 */
+  --bg-color: #080d04;
+  --surface-color: rgba(18, 26, 7, 0.88);
+  --surface-border: rgba(100, 130, 40, 0.25);
+  --primary-color: #5c7a1e;
+  --primary-hover: #6e9224;
+  --secondary-color: #c9a84c;
+  --text-main: #dde8c0;
+  --text-muted: #7a8c5a;
+  --danger-color: #b83232;
+  --success-color: #4a7c1e;
+  --gold: #c9a84c;
+  --gold-light: #e2c97e;
 }
 
 * {
@@ -29,11 +24,11 @@
 body {
   background: var(--bg-color);
   background-image:
-    radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.15) 0%, transparent 40%),
-    radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.15) 0%, transparent 40%),
-    url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    radial-gradient(circle at 15% 50%, rgba(90, 122, 30, 0.18) 0%, transparent 45%),
+    radial-gradient(circle at 85% 30%, rgba(201, 168, 76, 0.1) 0%, transparent 45%),
+    url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2364821e' fill-opacity='0.04'%3E%3Cpath d='M0 0h40v40H0zm40 40h40v40H40z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   color: var(--text-main);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Rajdhani', sans-serif;
   min-height: 100vh;
   display: flex;
   justify-content: center;
@@ -2110,4 +2105,351 @@ body {
   color: var(--text-main);
   line-height: 1.6;
   white-space: pre-wrap;
+}
+
+/* ══════════════════════════════════════════════════
+   ★ ARMY THEME OVERRIDES
+   Override all hardcoded blue/teal values with military
+   olive green and army gold throughout the app
+   ══════════════════════════════════════════════════ */
+
+/* ── Global font upgrades ─────────── */
+h1, h2, h3, h4 {
+  font-family: 'Oswald', sans-serif;
+  letter-spacing: 1px;
+}
+
+/* ── Auth card ────────────────────── */
+.auth-card {
+  background: linear-gradient(180deg, rgba(18,26,7,0.92) 0%, rgba(8,13,4,0.97) 100%);
+  border-color: rgba(100,130,40,0.3);
+  box-shadow: 0 40px 80px -20px rgba(0,0,0,0.9),
+              inset 0 1px 1px rgba(100,130,40,0.12),
+              0 0 40px rgba(90,122,30,0.06);
+}
+
+.auth-header h2 {
+  background: linear-gradient(to right, #dde8c0, #c9a84c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-family: 'Oswald', sans-serif;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* ── Scan line — army green ───────── */
+.scan-line {
+  background: rgba(90, 122, 30, 0.9);
+  box-shadow: 0 0 20px rgba(90, 122, 30, 1), 0 0 40px rgba(90, 122, 30, 0.6);
+}
+
+/* ── Scanner brackets — gold ──────── */
+.scanner-bracket {
+  border-color: rgba(201, 168, 76, 0.8);
+  box-shadow: 0 0 15px rgba(201, 168, 76, 0.3);
+}
+
+/* ── Status bar ───────────────────── */
+.status-bar {
+  background: rgba(8,13,4,0.6);
+  border-color: rgba(100,130,40,0.15);
+  font-family: 'Share Tech Mono', monospace;
+  letter-spacing: 0.5px;
+  font-size: 0.88rem;
+}
+
+/* ── Primary button ───────────────── */
+.btn-primary {
+  background: linear-gradient(135deg, #5c7a1e, #4a6318);
+  box-shadow: 0 4px 14px rgba(90,122,30,0.4);
+}
+.btn-primary:hover {
+  background: linear-gradient(135deg, #6e9224, #5c7a1e);
+}
+
+/* ── Admin link ───────────────────── */
+.btn-admin-link { color: #c9a84c; }
+.btn-admin-link:hover { color: #e2c97e; text-shadow: 0 0 12px rgba(201,168,76,0.6); }
+
+/* ── Dashboard ────────────────────── */
+.dashboard-container {
+  background: linear-gradient(180deg, rgba(18,26,7,0.9) 0%, rgba(8,13,4,0.97) 100%);
+  border-color: rgba(100,130,40,0.25);
+  box-shadow: 0 40px 80px -20px rgba(0,0,0,0.9),
+              inset 0 1px 1px rgba(100,130,40,0.1);
+}
+
+.dashboard-nav {
+  border-bottom-color: rgba(100,130,40,0.2);
+}
+
+.nav-brand h2 {
+  background: linear-gradient(to right, #dde8c0, #c9a84c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-family: 'Oswald', sans-serif;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.header-titles h1 {
+  background: linear-gradient(to right, #8aaa3e, #c9a84c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-family: 'Oswald', sans-serif;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.security-badge {
+  background: rgba(201,168,76,0.1);
+  border-color: rgba(201,168,76,0.3);
+  color: #c9a84c;
+}
+
+/* Stat icon colors */
+.bg-blue { background: rgba(90,122,30,0.2); color: #8aaa3e; }
+.bg-green { background: rgba(201,168,76,0.15); color: #c9a84c; }
+.bg-purple { background: rgba(180,130,40,0.2); color: #d4a860; }
+
+/* Logout button */
+.btn-logout {
+  background: rgba(184,50,50,0.1);
+  border-color: rgba(184,50,50,0.25);
+  color: #d46060;
+}
+.btn-logout:hover { background: rgba(184,50,50,0.2); }
+
+/* Doc items */
+.doc-item:hover {
+  border-color: rgba(201,168,76,0.4);
+  background: rgba(201,168,76,0.06);
+}
+.doc-type { color: #c9a84c; }
+
+/* Terminal */
+.terminal-window {
+  background: #030602;
+  border-color: rgba(90,122,30,0.4);
+}
+.terminal-header { background: #0d1208; border-bottom-color: rgba(90,122,30,0.3); }
+.terminal-body { font-family: 'Share Tech Mono', monospace; color: #a8b88a; }
+.t-green { color: #7ab03a; }
+.t-blue  { color: #c9a84c; }
+.t-yellow{ color: #e2c97e; }
+.t-gray  { color: #4a5e32; }
+
+/* ── Admin Login Page ─────────────── */
+.alp-card {
+  background: linear-gradient(160deg, rgba(8,13,4,0.98), rgba(18,26,7,0.97));
+  border-color: rgba(100,130,40,0.35);
+  box-shadow: 0 0 0 1px rgba(100,130,40,0.06) inset,
+              0 50px 100px -20px rgba(0,0,0,0.95),
+              0 0 80px rgba(90,122,30,0.1);
+}
+
+.alp-back-btn { border-color: rgba(100,130,40,0.2); }
+.alp-back-btn:hover { background: rgba(90,122,30,0.12); }
+
+.alp-shield-ring {
+  background: linear-gradient(135deg, rgba(90,122,30,0.25), rgba(201,168,76,0.2));
+  border-color: rgba(201,168,76,0.5);
+  color: #c9a84c;
+  box-shadow: 0 0 0 8px rgba(90,122,30,0.06), 0 0 40px rgba(90,122,30,0.2);
+}
+
+@keyframes alp-pulse {
+  0%,100% { box-shadow: 0 0 0 8px rgba(90,122,30,0.06), 0 0 30px rgba(90,122,30,0.15); }
+  50%      { box-shadow: 0 0 0 14px rgba(90,122,30,0.08), 0 0 55px rgba(201,168,76,0.3); }
+}
+
+.alp-header h1 {
+  background: linear-gradient(to right, #dde8c0, #c9a84c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-family: 'Oswald', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.alp-rings .alp-ring {
+  border-color: rgba(90,122,30,0.12);
+}
+.alp-ring--2 { border-color: rgba(201,168,76,0.07); }
+.alp-ring--3 { border-color: rgba(90,122,30,0.05); }
+
+@keyframes alp-ring-expand {
+  0%   { transform: scale(0.95); opacity: 0.5; }
+  50%  { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.5; }
+}
+
+.alp-field input:focus {
+  border-color: #5c7a1e;
+  box-shadow: 0 0 0 3px rgba(90,122,30,0.18);
+}
+
+.alp-submit {
+  background: linear-gradient(135deg, #5c7a1e, #c9a84c);
+  box-shadow: 0 6px 24px rgba(90,122,30,0.4);
+}
+.alp-submit:hover:not(:disabled) {
+  box-shadow: 0 10px 36px rgba(201,168,76,0.45);
+}
+
+/* ── Admin Dashboard ──────────────── */
+.adm-page { background: var(--bg-color); }
+
+.adm-nav {
+  background: rgba(8,13,4,0.97);
+  border-bottom-color: rgba(100,130,40,0.25);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.7);
+}
+
+.adm-brand-icon { color: #c9a84c; filter: drop-shadow(0 0 8px rgba(201,168,76,0.5)); }
+
+.adm-brand-title { font-family: 'Oswald', sans-serif; letter-spacing: 1.5px; text-transform: uppercase; }
+.adm-brand-sub   { letter-spacing: 1px; }
+
+.adm-role-badge {
+  background: rgba(201,168,76,0.12);
+  border-color: rgba(201,168,76,0.3);
+  color: #c9a84c;
+}
+
+.adm-session-dot {
+  background: #7ab03a;
+  box-shadow: 0 0 8px #7ab03a;
+}
+
+.adm-header h1 {
+  background: linear-gradient(to right, #8aaa3e, #c9a84c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-family: 'Oswald', sans-serif;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.adm-stat-pill {
+  background: rgba(90,122,30,0.1);
+  border-color: rgba(90,122,30,0.25);
+  color: #8aaa3e;
+}
+
+.adm-tab-btn--active {
+  color: #c9a84c;
+  border-bottom-color: #c9a84c;
+  background: rgba(201,168,76,0.05);
+}
+.adm-tab-btn:hover { background: rgba(90,122,30,0.06); }
+.adm-tabs { border-bottom-color: rgba(100,130,40,0.15); }
+
+.adm-table thead { background: rgba(90,122,30,0.07); }
+.adm-table-row:hover { background: rgba(201,168,76,0.04); }
+.adm-table thead th { color: #7a8c5a; letter-spacing: 1px; font-family: 'Share Tech Mono', monospace; font-size: 0.74rem; }
+
+.adm-avatar {
+  background: linear-gradient(135deg, #4a6318, #c9a84c);
+  box-shadow: 0 4px 12px rgba(201,168,76,0.3);
+}
+
+.adm-search-input:focus { border-color: #5c7a1e; box-shadow: 0 0 0 3px rgba(90,122,30,0.15); }
+
+.adm-send-btn {
+  background: rgba(90,122,30,0.1);
+  border-color: rgba(90,122,30,0.3);
+  color: #8aaa3e;
+}
+.adm-send-btn:hover {
+  background: rgba(90,122,30,0.2);
+  border-color: rgba(90,122,30,0.55);
+}
+
+.adm-desc-count {
+  background: rgba(201,168,76,0.1);
+  border-color: rgba(201,168,76,0.25);
+  color: #c9a84c;
+}
+
+/* ── Register Face Panel ──────────── */
+.rfp-capture-btn {
+  background: linear-gradient(135deg, #5c7a1e, #4a6318);
+  box-shadow: 0 4px 20px rgba(90,122,30,0.4);
+}
+.rfp-capture-btn:hover:not(:disabled) {
+  box-shadow: 0 8px 30px rgba(90,122,30,0.55);
+}
+.rfp-intro { background: rgba(90,122,30,0.06); border-color: rgba(90,122,30,0.2); }
+.rfp-intro-icon { background: rgba(90,122,30,0.15); border-color: rgba(90,122,30,0.3); color: #8aaa3e; }
+.rfp-name-input:focus { border-color: #5c7a1e; box-shadow: 0 0 0 3px rgba(90,122,30,0.16); }
+.rfp-spinner { color: #8aaa3e; }
+
+/* ── Send Message Modal ───────────── */
+.smm-card {
+  background: linear-gradient(160deg, rgba(8,13,4,0.98), rgba(18,26,7,0.98));
+  border-color: rgba(100,130,40,0.3);
+  box-shadow: 0 40px 80px rgba(0,0,0,0.95), 0 0 60px rgba(90,122,30,0.08);
+}
+.smm-avatar { background: linear-gradient(135deg, #4a6318, #c9a84c); box-shadow: 0 4px 16px rgba(201,168,76,0.3); }
+.smm-send-btn {
+  background: linear-gradient(135deg, #5c7a1e, #c9a84c);
+  box-shadow: 0 4px 20px rgba(90,122,30,0.4);
+}
+.smm-send-btn:hover:not(:disabled) { box-shadow: 0 8px 28px rgba(201,168,76,0.4); }
+.smm-textarea:focus { border-color: #5c7a1e; box-shadow: 0 0 0 3px rgba(90,122,30,0.15); }
+.smm-sent { color: #c9a84c; }
+
+/* ── Inbox / Messages ─────────────── */
+.inbox-bell-btn {
+  background: rgba(90,122,30,0.1);
+  border-color: rgba(90,122,30,0.3);
+  color: #8aaa3e;
+}
+.inbox-bell-btn:hover { background: rgba(90,122,30,0.2); }
+.inbox-panel { border-color: rgba(90,122,30,0.25); }
+.inbox-header { background: rgba(90,122,30,0.07); border-bottom-color: rgba(90,122,30,0.12); }
+.inbox-title { color: #8aaa3e; }
+.inbox-count-chip { background: rgba(201,168,76,0.12); border-color: rgba(201,168,76,0.3); color: #c9a84c; }
+.inbox-from { color: #c9a84c; }
+.inbox-read-tick { color: #8aaa3e; }
+.inbox-msg-item:hover { background: rgba(90,122,30,0.04); }
+
+/* ── Tactical headings style ──────── */
+.adm-header h1::before,
+.header-titles h1::before {
+  content: '★ ';
+  font-size: 0.7em;
+  opacity: 0.6;
+}
+.adm-header h1::after,
+.header-titles h1::after {
+  content: ' ★';
+  font-size: 0.7em;
+  opacity: 0.6;
+}
+
+/* ── Status dot color fix ──────────── */
+.status-dot.online {
+  background: #7ab03a;
+  box-shadow: 0 0 8px #7ab03a;
+}
+
+/* ── Unread msg badge army color ───── */
+.adm-msg-count--unread {
+  background: rgba(201,168,76,0.15);
+  border-color: rgba(201,168,76,0.4);
+  color: #c9a84c;
+}
+
+/* ── Classified stamp on auth header ─ */
+.auth-header::after {
+  content: 'CLASSIFIED';
+  display: block;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 4px;
+  color: rgba(201,168,76,0.35);
+  margin-top: -8px;
+  text-align: center;
 }
