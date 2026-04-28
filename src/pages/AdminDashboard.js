@@ -273,7 +273,7 @@ const SoldiersTab = () => {
                 const unread = soldierMsgs.filter(msg => !msg.read).length;
                 return (
                   <tr key={m.label} className="adm-table-row">
-                    <td className="adm-td-num">PVT-{String(idx + 1).padStart(3, '0')}</td>
+          <td className="adm-td-num">SEP-{String(idx + 1).padStart(3, '0')}</td>
                     <td className="adm-td-name">
                       <div className="adm-avatar">{m.label.charAt(0).toUpperCase()}</div>
                       <span>{m.label.toUpperCase()}</span>
@@ -341,8 +341,8 @@ const AdminDashboard = ({ admin, onLogout }) => {
         <div className="adm-nav-brand">
           <ShieldCheck size={26} className="adm-brand-icon" />
           <div>
-            <span className="adm-brand-title">Army Command HQ</span>
-            <span className="adm-brand-sub">Chief of Army — Command Panel</span>
+            <span className="adm-brand-title">Indian Army Command HQ</span>
+            <span className="adm-brand-sub">COAS — Command Panel</span>
           </div>
         </div>
         <div className="adm-nav-right">

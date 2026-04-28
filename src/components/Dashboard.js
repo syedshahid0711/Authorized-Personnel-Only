@@ -51,7 +51,7 @@ const Dashboard = ({ user, onLogout }) => {
         <nav className="dashboard-nav">
           <div className="nav-brand">
             <ShieldCheck size={28} className="text-primary" />
-            <h2>Army Command HQ</h2>
+            <h2>Indian Army Command HQ</h2>
           </div>
           <div className="nav-user">
             <div className="user-profile">
@@ -98,7 +98,7 @@ const Dashboard = ({ user, onLogout }) => {
               {messages.length === 0 ? (
                 <div className="inbox-empty">
                   <MessageSquare size={36} />
-                  <p>No orders from Chief of Army. Await further instructions.</p>
+                  <p>No orders from COAS. Await further instructions.</p>
                 </div>
               ) : (
                 <ul className="inbox-list">
@@ -106,7 +106,7 @@ const Dashboard = ({ user, onLogout }) => {
                     <li key={i} className="inbox-msg-item">
                       <div className="inbox-msg-meta">
                         <span className="inbox-from">
-                          <ShieldCheck size={12} /> Chief of Army
+                          <ShieldCheck size={12} /> COAS
                         </span>
                         <span className="inbox-time">{msg.sentAt}</span>
                         <CheckCheck size={13} className="inbox-read-tick" title="Received" />

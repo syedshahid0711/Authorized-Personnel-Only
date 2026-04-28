@@ -104,7 +104,7 @@ const FaceAuth = ({ onAuthSuccess, onAdminClick }) => {
           );
         }
       } else {
-        setStatusMessage('NO SOLDIERS ENLISTED. CONTACT CHIEF OF ARMY.');
+        setStatusMessage('NO SOLDIERS ENLISTED. CONTACT COAS.');
       }
     } else {
       failedAttemptsRef.current = 0;
@@ -120,7 +120,7 @@ const FaceAuth = ({ onAuthSuccess, onAdminClick }) => {
       <div className="auth-card">
         <div className="auth-header">
           <ScanFace size={32} className="text-primary" />
-          <h2>Biometric ID System</h2>
+          <h2>Indian Army Biometric System</h2>
         </div>
 
         <div className="video-wrapper">
@@ -148,7 +148,7 @@ const FaceAuth = ({ onAuthSuccess, onAdminClick }) => {
         <div className="auth-footer">
           <div className="auth-footer-actions">
             <button className="btn-admin-link" onClick={onAdminClick}>
-              <KeyRound size={14} /> Chief of Army Login
+              <KeyRound size={14} /> COAS Login
             </button>
           </div>
         </div>
