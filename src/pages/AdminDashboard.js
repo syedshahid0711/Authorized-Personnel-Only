@@ -320,9 +320,6 @@ const SoldiersTab = () => {
 // ─── AdminDashboard (main) ─────────────────────────────────────
 const AdminDashboard = ({ admin, onLogout }) => {
   const [activeTab, setActiveTab] = useState('soldiers');
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => { setTimeout(() => setMounted(true), 30); }, []);
 
   const soldierCount = (() => {
     const s = localStorage.getItem('registeredFaces');
@@ -335,7 +332,7 @@ const AdminDashboard = ({ admin, onLogout }) => {
   });
 
   return (
-    <div className={`adm-page ${mounted ? 'adm-page--visible' : ''}`}>
+    <div className="adm-page adm-page--visible">
       {/* NAV */}
       <nav className="adm-nav">
         <div className="adm-nav-brand">

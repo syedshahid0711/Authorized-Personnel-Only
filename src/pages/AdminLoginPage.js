@@ -13,9 +13,6 @@ const AdminLoginPage = ({ onLoginSuccess, onBack }) => {
   const [locked, setLocked] = useState(false);
   const [lockTimer, setLockTimer] = useState(0);
   const [shake, setShake] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => { setTimeout(() => setMounted(true), 30); }, []);
 
   useEffect(() => {
     if (!locked) return;
@@ -38,8 +35,7 @@ const AdminLoginPage = ({ onLoginSuccess, onBack }) => {
     if (locked) return;
     if (adminId.trim() === ADMIN_ID && password === ADMIN_PASSWORD) {
       setError('');
-      setMounted(false);
-      setTimeout(() => onLoginSuccess({ id: ADMIN_ID, role: 'Chief of the Army' }), 400);
+      onLoginSuccess({ id: ADMIN_ID, role: 'Chief of the Army' });
     } else {
       const next = attempts + 1;
       setAttempts(next);
@@ -56,14 +52,14 @@ const AdminLoginPage = ({ onLoginSuccess, onBack }) => {
   };
 
   return (
-    <div className={`alp-page ${mounted ? 'alp-page--visible' : ''}`}>
+    <div className="alp-page alp-page--visible">
       <div className="alp-rings">
         <div className="alp-ring alp-ring--1" />
         <div className="alp-ring alp-ring--2" />
         <div className="alp-ring alp-ring--3" />
       </div>
 
-      <div className={`alp-card ${shake ? 'alp-card--shake' : ''} ${mounted ? 'alp-card--visible' : ''}`}>
+      <div className={`alp-card ${shake ? 'alp-card--shake' : ''} alp-card--visible`}>
 
         <button className="alp-back-btn" onClick={onBack}>
           <ArrowLeft size={16} /> Return to Base

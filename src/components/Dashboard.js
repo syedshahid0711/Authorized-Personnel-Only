@@ -45,7 +45,7 @@ const Dashboard = ({ user, onLogout }) => {
   });
 
   return (
-    <div className="dashboard-wrapper fade-in-up">
+    <div className="dashboard-wrapper">
       <div className="dashboard-container">
         {/* NAV */}
         <nav className="dashboard-nav">
@@ -83,7 +83,7 @@ const Dashboard = ({ user, onLogout }) => {
 
           {/* COMMANDER'S ORDERS INBOX */}
           {showInbox && (
-            <div className="inbox-panel stagger-1">
+            <div className="inbox-panel">
               <div className="inbox-header">
                 <div className="inbox-title">
                   <Bell size={18} />
@@ -120,7 +120,7 @@ const Dashboard = ({ user, onLogout }) => {
           )}
 
           {/* STATS */}
-          <div className="stats-grid stagger-1">
+          <div className="stats-grid">
             <div className="stat-card">
               <div className="stat-icon bg-blue"><Users size={24} /></div>
               <div className="stat-info">
@@ -145,7 +145,7 @@ const Dashboard = ({ user, onLogout }) => {
           </div>
 
           {/* SPLIT */}
-          <div className="dashboard-split stagger-2">
+          <div className="dashboard-split">
             <section className="documents-section">
               <div className="section-header">
                 <h2><FileText size={20} /> Classified Intel</h2>
