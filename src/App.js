@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import FaceAuth from './components/FaceAuth';
 import Dashboard from './components/Dashboard';
-import ParticleBackground from './components/ParticleBackground';
 import AdminLoginPage from './pages/AdminLoginPage';
 import AdminDashboard from './pages/AdminDashboard';
 import './App.css';
@@ -43,8 +42,6 @@ function App() {
 
   return (
     <div className="App">
-      <ParticleBackground />
-
       {screen === 'face-auth' && (
         <FaceAuth
           onAuthSuccess={handleFaceAuthSuccess}
