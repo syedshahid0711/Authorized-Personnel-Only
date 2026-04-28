@@ -2760,60 +2760,135 @@ h4 {
 }
 
 /* ══════════════════════════════════════════════════
-   ★ BULLET PAGE TRANSITION
+   ★ BULLET PAGE TRANSITION (REALISTIC)
    ══════════════════════════════════════════════════ */
 .bullet-transition-overlay {
   position: fixed;
   inset: 0;
-  z-index: 9999;
+  z-index: 99999;
   pointer-events: none;
-  display: flex;
-  align-items: center;
+  overflow: hidden;
 }
 
-.muzzle-flash {
+/* Sudden intense screen shake */
+.App.shaking {
+  animation: heavy-shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes heavy-shake {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  10% { transform: translate(-15px, 10px) rotate(-2deg); }
+  20% { transform: translate(15px, -10px) rotate(2deg); }
+  30% { transform: translate(-10px, -15px) rotate(-1deg); }
+  40% { transform: translate(10px, 15px) rotate(1deg); }
+  50% { transform: translate(-5px, -5px) rotate(0); }
+  60% { transform: translate(3px, 3px) rotate(0); }
+  100% { transform: translate(0, 0) rotate(0); }
+}
+
+/* Darkens the edges like you just got blinded */
+.blast-vignette {
   position: absolute;
   inset: 0;
-  background: white;
+  background: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.9) 100%);
   opacity: 0;
-  animation: flash-blind 0.5s ease-out forwards;
+  animation: blast-fade 0.6s ease-out forwards;
 }
 
-.bullet-projectile {
+@keyframes blast-fade {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Flash in the center left */
+.realistic-flash {
   position: absolute;
   top: 50%;
-  left: -20vw;
-  width: 15vw;
-  height: 6px;
-  background: linear-gradient(to right, transparent, rgba(255,200,0,0.8), #fff);
-  border-radius: 50% 100% 100% 50%;
-  filter: drop-shadow(0 0 15px rgba(255,150,0,0.9));
-  animation: fire-bullet 0.3s cubic-bezier(0.8, 0, 1, 1) forwards;
+  left: -10vw;
+  width: 40vw;
+  height: 40vw;
+  transform: translateY(-50%);
+  background: radial-gradient(circle, #fff 0%, #ffea00 20%, #ff4500 40%, transparent 70%);
+  opacity: 0;
+  mix-blend-mode: screen;
+  animation: explosion-flash 0.3s cubic-bezier(0.1, 1, 0.2, 1) forwards;
 }
 
-.bullet-trail {
+@keyframes explosion-flash {
+  0% { opacity: 0; transform: translateY(-50%) scale(0.1); }
+  20% { opacity: 1; transform: translateY(-50%) scale(1.5); }
+  100% { opacity: 0; transform: translateY(-50%) scale(2); }
+}
+
+/* Shockwaves / Mach cones */
+.shockwave {
+  position: absolute;
+  top: 50%;
+  left: 20%;
+  width: 20px;
+  height: 100vh;
+  border-radius: 50%;
+  border-right: 15px solid rgba(255,255,255,0.4);
+  filter: blur(4px);
+  transform: translate(-50%, -50%) scale(0.1);
+  opacity: 0;
+  animation: mach-cone 0.4s ease-out forwards;
+}
+.sw-1 { animation-delay: 0.05s; left: 40%; }
+.sw-2 { animation-delay: 0.1s; left: 60%; }
+
+@keyframes mach-cone {
+  0% { transform: translate(-50%, -50%) scale(0.1); opacity: 1; }
+  100% { transform: translate(50vw, -50%) scale(4); opacity: 0; }
+}
+
+/* Sparks flying from muzzle */
+.spark {
   position: absolute;
   top: 50%;
   left: 0;
-  height: 2px;
-  background: linear-gradient(to right, transparent, rgba(201,168,76,0.6));
-  animation: trail-fade 0.5s ease-out forwards;
+  width: 60px;
+  height: 3px;
+  background: #ffea00;
+  border-radius: 2px;
+  opacity: 0;
+  filter: drop-shadow(0 0 5px #ff4500);
+  animation: spark-fly 0.4s ease-out forwards;
 }
 
-@keyframes flash-blind {
-  0% { opacity: 0; }
-  15% { opacity: 0.9; background: #fffacd; }
-  35% { opacity: 0.6; background: #ff4500; }
-  100% { opacity: 0; background: transparent; }
+@keyframes spark-fly {
+  0% { transform: translate(0, 0) rotate(var(--rot)); opacity: 1; width: 60px; }
+  100% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)); opacity: 0; width: 10px; }
 }
 
-@keyframes fire-bullet {
-  0% { transform: translate(-20vw, -50%); }
+.bullet-container {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  display: flex;
+  align-items: center;
+  animation: fire-real-bullet 0.25s cubic-bezier(0.6, 0, 1, 1) forwards;
+  animation-delay: 0.02s;
+}
+
+@keyframes fire-real-bullet {
+  0% { transform: translate(-30vw, -50%); }
   100% { transform: translate(120vw, -50%); }
 }
 
-@keyframes trail-fade {
-  0% { width: 0; opacity: 1; }
-  50% { width: 100vw; opacity: 0.8; }
-  100% { width: 100vw; opacity: 0; }
+.realistic-bullet {
+  width: 160px;
+  height: 30px;
+  filter: drop-shadow(0 0 10px rgba(255,100,0,0.8));
+  z-index: 2;
+}
+
+.heat-trail {
+  width: 80vw;
+  height: 6px;
+  background: linear-gradient(to right, transparent, rgba(200,50,0,0.5), rgba(255,200,0,0.9));
+  margin-right: -20px;
+  border-radius: 10px;
+  filter: blur(2px);
 }
