@@ -1,31 +1,22 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as faceapi from '@vladmandic/face-api';
-import { Camera, UserPlus, ScanFace, Loader2, ShieldAlert, ShieldCheck } from 'lucide-react';
-import AdminLogin from './AdminLogin';
+import { Camera, UserPlus, ScanFace, Loader2, ShieldAlert, KeyRound } from 'lucide-react';
 
-const FaceAuth = ({ onAuthSuccess }) => {
+const FaceAuth = ({ onAuthSuccess, onAdminClick }) => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [modelsLoaded, setModelsLoaded] = useState(false);
-  const [mode, setMode] = useState('scan'); // 'scan' or 'register'
+  const [mode, setMode] = useState('scan'); // 'scan' | 'register'
   const [registerName, setRegisterName] = useState('');
   const [statusMessage, setStatusMessage] = useState('Loading AI Models...');
   const [registeredFaces, setRegisteredFaces] = useState([]);
   const [faceMatcher, setFaceMatcher] = useState(null);
   const failedAttemptsRef = useRef(0);
-  const [showAdminLogin, setShowAdminLogin] = useState(false);
-  const [adminUser, setAdminUser] = useState(null); // { id, role }
-
   const faceMatcherRef = useRef(null);
   const modeRef = useRef(mode);
 
-  useEffect(() => {
-    modeRef.current = mode;
-  }, [mode]);
-
-  useEffect(() => {
-    faceMatcherRef.current = faceMatcher;
-  }, [faceMatcher]);
+  useEffect(() => { modeRef.current = mode; }, [mode]);
+  useEffect(() => { faceMatcherRef.current = faceMatcher; }, [faceMatcher]);
 
   // Load models on mount
   useEffect(() => {
@@ -35,29 +26,28 @@ const FaceAuth = ({ onAuthSuccess }) => {
         await Promise.all([
           faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
           faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
-          faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL)
+          faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
         ]);
         setModelsLoaded(true);
         setStatusMessage('Starting Webcam...');
         startVideo();
         loadRegisteredFaces();
       } catch (err) {
-        console.error("Error loading models:", err);
+        console.error('Error loading models:', err);
         setStatusMessage('Error loading AI models.');
       }
     };
     loadModels();
   }, []);
 
-  // Setup FaceMatcher when registeredFaces change
+  // Build FaceMatcher whenever registeredFaces change
   useEffect(() => {
     if (registeredFaces.length > 0) {
-      const labeledDescriptors = registeredFaces.map(rf => {
-        // Convert plain arrays back to Float32Arrays
+      const labeled = registeredFaces.map(rf => {
         const descriptors = rf.descriptors.map(d => new Float32Array(Object.values(d)));
         return new faceapi.LabeledFaceDescriptors(rf.label, descriptors);
       });
-      setFaceMatcher(new faceapi.FaceMatcher(labeledDescriptors, 0.38));
+      setFaceMatcher(new faceapi.FaceMatcher(labeled, 0.38));
     } else {
       setFaceMatcher(null);
     }
@@ -65,20 +55,14 @@ const FaceAuth = ({ onAuthSuccess }) => {
 
   const loadRegisteredFaces = () => {
     const stored = localStorage.getItem('registeredFaces');
-    if (stored) {
-      setRegisteredFaces(JSON.parse(stored));
-    }
+    if (stored) setRegisteredFaces(JSON.parse(stored));
   };
 
   const startVideo = () => {
     navigator.mediaDevices.getUserMedia({ video: true })
-      .then((stream) => {
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-        }
-      })
-      .catch((err) => {
-        console.error("Error accessing webcam:", err);
+      .then(stream => { if (videoRef.current) videoRef.current.srcObject = stream; })
+      .catch(err => {
+        console.error('Webcam error:', err);
         setStatusMessage('Webcam access denied.');
       });
   };
@@ -95,19 +79,18 @@ const FaceAuth = ({ onAuthSuccess }) => {
   const scanLoop = async () => {
     if (modeRef.current !== 'scan' || !videoRef.current || videoRef.current.paused || videoRef.current.ended) return;
 
-    const result = await faceapi.detectSingleFace(
-      videoRef.current,
-      new faceapi.TinyFaceDetectorOptions()
-    ).withFaceLandmarks().withFaceDescriptor();
+    const result = await faceapi
+      .detectSingleFace(videoRef.current, new faceapi.TinyFaceDetectorOptions())
+      .withFaceLandmarks()
+      .withFaceDescriptor();
 
     if (result) {
-      // Draw detection
       if (canvasRef.current && videoRef.current) {
         const displaySize = { width: videoRef.current.videoWidth, height: videoRef.current.videoHeight };
         faceapi.matchDimensions(canvasRef.current, displaySize);
-        const resizedDetections = faceapi.resizeResults(result, displaySize);
+        const resized = faceapi.resizeResults(result, displaySize);
         canvasRef.current.getContext('2d').clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-        faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
+        faceapi.draw.drawDetections(canvasRef.current, resized);
       }
 
       if (faceMatcherRef.current) {
@@ -116,29 +99,24 @@ const FaceAuth = ({ onAuthSuccess }) => {
           failedAttemptsRef.current = 0;
           setStatusMessage(`Match Found: ${bestMatch.label}! Authenticating...`);
           setTimeout(() => {
-            if (videoRef.current && videoRef.current.srcObject) {
-              videoRef.current.srcObject.getTracks().forEach(t => t.stop());
-            }
+            if (videoRef.current?.srcObject) videoRef.current.srcObject.getTracks().forEach(t => t.stop());
             onAuthSuccess(bestMatch.label);
           }, 1500);
-          return; // Stop scanning
+          return;
         } else {
           failedAttemptsRef.current += 1;
-          if (failedAttemptsRef.current >= 15) {
-            setStatusMessage('⚠️ CRITICAL: SECURITY BREACH. AUTHORITIES ALERTED! ⚠️');
-          } else {
-            setStatusMessage('Access Denied. Face not recognized.');
-          }
+          setStatusMessage(
+            failedAttemptsRef.current >= 15
+              ? '⚠️ CRITICAL: SECURITY BREACH. AUTHORITIES ALERTED! ⚠️'
+              : 'Access Denied. Face not recognized.'
+          );
         }
       } else {
         setStatusMessage('No registered faces found in database.');
       }
     } else {
-      // clear canvas
       failedAttemptsRef.current = 0;
-      if (canvasRef.current) {
-        canvasRef.current.getContext('2d').clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-      }
+      if (canvasRef.current) canvasRef.current.getContext('2d').clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
       setStatusMessage('Scanning for Authorized Personnel...');
     }
 
@@ -146,57 +124,51 @@ const FaceAuth = ({ onAuthSuccess }) => {
   };
 
   const handleRegisterFace = async () => {
-    if (!registerName.trim()) {
-      alert("Please enter a name first.");
-      return;
-    }
+    if (!registerName.trim()) { alert('Please enter a name first.'); return; }
     setStatusMessage('Capturing facial mapping...');
 
-    const result = await faceapi.detectSingleFace(
-      videoRef.current,
-      new faceapi.TinyFaceDetectorOptions()
-    ).withFaceLandmarks().withFaceDescriptor();
+    const result = await faceapi
+      .detectSingleFace(videoRef.current, new faceapi.TinyFaceDetectorOptions())
+      .withFaceLandmarks()
+      .withFaceDescriptor();
 
     if (result) {
-      // Convert Float32Array to regular array for JSON storage
       const descriptorArray = Array.from(result.descriptor);
       const newFace = {
         label: registerName.trim(),
-        descriptors: [descriptorArray]
+        descriptors: [descriptorArray],
+        registeredAt: new Date().toLocaleString('en-IN', {
+          year: 'numeric', month: 'short', day: '2-digit',
+          hour: '2-digit', minute: '2-digit'
+        }),
       };
-
       const updatedFaces = [...registeredFaces, newFace];
       setRegisteredFaces(updatedFaces);
       localStorage.setItem('registeredFaces', JSON.stringify(updatedFaces));
-
-      setStatusMessage(`Successfully registered ${registerName}!`);
+      setStatusMessage(`✅ Successfully registered ${registerName.trim()}!`);
       setRegisterName('');
-      setTimeout(() => {
-        setMode('scan');
-      }, 2000);
+      setTimeout(() => setMode('scan'), 2000);
     } else {
       setStatusMessage('No face detected. Please try again.');
     }
   };
 
   const handleClearFaces = () => {
-    if (window.confirm("Are you sure you want to delete all registered faces?")) {
+    if (window.confirm('Delete ALL registered faces?')) {
       setRegisteredFaces([]);
       localStorage.removeItem('registeredFaces');
-      setStatusMessage('All registered faces have been cleared.');
+      setStatusMessage('All registered faces cleared.');
     }
   };
 
-  // Re-trigger loop when switching back to scan mode
+  // Re-trigger scan loop when switching back to scan mode
   useEffect(() => {
     if (mode === 'scan' && modelsLoaded && videoRef.current && !videoRef.current.paused) {
       scanLoop();
     }
     if (mode === 'register') {
       setStatusMessage('Position face clearly in camera.');
-      if (canvasRef.current) {
-        canvasRef.current.getContext('2d').clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-      }
+      if (canvasRef.current) canvasRef.current.getContext('2d').clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode]);
@@ -216,20 +188,13 @@ const FaceAuth = ({ onAuthSuccess }) => {
               <p>{statusMessage}</p>
             </div>
           )}
-          <video
-            ref={videoRef}
-            onPlay={handleVideoPlay}
-            autoPlay
-            muted
-            playsInline
-            className="webcam-video"
-          />
+          <video ref={videoRef} onPlay={handleVideoPlay} autoPlay muted playsInline className="webcam-video" />
           <canvas ref={canvasRef} className="webcam-canvas" />
-          {mode === 'scan' && <div className="scan-line"></div>}
-          <div className="scanner-bracket tl"></div>
-          <div className="scanner-bracket tr"></div>
-          <div className="scanner-bracket bl"></div>
-          <div className="scanner-bracket br"></div>
+          {mode === 'scan' && <div className="scan-line" />}
+          <div className="scanner-bracket tl" />
+          <div className="scanner-bracket tr" />
+          <div className="scanner-bracket bl" />
+          <div className="scanner-bracket br" />
         </div>
 
         <div className={`status-bar ${statusMessage.includes('CRITICAL') ? 'status-critical' : statusMessage.includes('Denied') ? 'status-error' : ''}`}>
@@ -243,7 +208,7 @@ const FaceAuth = ({ onAuthSuccess }) => {
               type="text"
               placeholder="Enter Authorized Name"
               value={registerName}
-              onChange={(e) => setRegisterName(e.target.value)}
+              onChange={e => setRegisterName(e.target.value)}
               className="name-input"
             />
             <button onClick={handleRegisterFace} className="btn-primary">
@@ -257,47 +222,24 @@ const FaceAuth = ({ onAuthSuccess }) => {
 
         <div className="auth-footer">
           {mode === 'scan' ? (
-            <button className="btn-text" onClick={() => setShowAdminLogin(true)}>
-              🔐 Admin: Register New Face
-            </button>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-              {adminUser && (
-                <div className="admin-session-badge">
-                  <ShieldCheck size={14} />
-                  <span>Admin Session: <strong>{adminUser.role}</strong></span>
-                  <button
-                    className="admin-session-end"
-                    onClick={() => { setMode('scan'); setAdminUser(null); setStatusMessage('Scanning for Authorized Personnel...'); }}
-                  >
-                    End Session
-                  </button>
-                </div>
-              )}
-              <button className="btn-text" onClick={() => {
-                setMode('scan');
-                setStatusMessage('Scanning for Authorized Personnel...');
-              }}>
-                ← Back to Security Portal
+            <div className="auth-footer-actions">
+              <button className="btn-text" onClick={() => setMode('register')}>
+                Register New Face
+              </button>
+              <span className="footer-divider">|</span>
+              <button className="btn-admin-link" onClick={onAdminClick}>
+                <KeyRound size={14} /> Admin Login
               </button>
             </div>
+          ) : (
+            <button className="btn-text" onClick={() => { setMode('scan'); setStatusMessage('Scanning for Authorized Personnel...'); }}>
+              ← Back to Security Portal
+            </button>
           )}
         </div>
-
-        {showAdminLogin && (
-          <AdminLogin
-            onSuccess={(admin) => {
-              setAdminUser(admin);
-              setShowAdminLogin(false);
-              setMode('register');
-            }}
-            onClose={() => setShowAdminLogin(false)}
-          />
-        )}
       </div>
     </div>
   );
 };
 
 export default FaceAuth;
-
